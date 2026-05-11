@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Study Sessions - Personal Learning Tracker</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        .table-container {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            margin-top: 24px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 16px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        th {
+            color: var(--text-secondary);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 13px;
+        }
+        td {
+            color: white;
+            font-size: 15px;
+        }
+        .summary-card {
+            background: rgba(139, 92, 246, 0.2);
+            border: 1px solid rgba(139, 92, 246, 0.4);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+        .summary-card h3 {
+            font-size: 32px;
+            color: #c4b5fd;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" style="max-width: 1000px; margin: 40px auto;">
+        
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+            <h2>Study History</h2>
+            <div style="display: flex; gap: 16px;">
+                <a th:href="@{/dashboard}" class="btn" style="background: rgba(255,255,255,0.1); width: auto;">Back to Dashboard</a>
+                <a th:href="@{/study-sessions/add}" class="btn" style="width: auto; background: #8b5cf6;">+ Record Session</a>
+            </div>
+        </div>
+
+        <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+
+        <div class="summary-card">
+            <h3 th:text="${totalMinutes + ' Mins'}">0 Mins</h3>
+            <p style="color: rgba(255,255,255,0.7); font-size: 14px; margin-top: 8px;">Total Study Time Logged</p>
+        </div>
+
+        <div class="table-container">
+            <table th:if="${not #lists.isEmpty(sessions)}">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Subject</th>
+                        <th>Topic</th>
+                        <th>Duration</th>
+                        <th>Remarks</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="session : ${sessions}">
+                        <td th:text="${session.studyDate}"></td>
+                        <td th:text="${session.subject.name}"></td>
+                        <td th:text="${session.topic.name}"></td>
+                        <td th:text="${session.durationMinutes + ' min'}"></td>
+                        <td th:text="${session.remarks}"></td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <div th:if="${#lists.isEmpty(sessions)}" style="text-align: center; padding: 40px; color: var(--text-secondary);">
+                No study sessions recorded yet. Start tracking your time!
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>

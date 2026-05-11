@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Goal Management - Personal Learning Tracker</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        .goal-card {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--surface-border);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .goal-info h3 {
+            font-size: 20px;
+            color: white;
+            margin-bottom: 8px;
+        }
+        .progress-text {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+        .deadline-badge {
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 600;
+            text-align: center;
+            min-width: 120px;
+        }
+        .deadline-safe { background: rgba(16, 185, 129, 0.2); color: #6ee7b7; }
+        .deadline-warn { background: rgba(245, 158, 11, 0.2); color: #fcd34d; }
+        .deadline-danger { background: rgba(239, 68, 68, 0.2); color: #fca5a5; }
+        .deadline-completed { background: rgba(59, 130, 246, 0.2); color: #93c5fd; }
+    </style>
+</head>
+<body>
+    <div class="container" style="max-width: 900px; margin: 40px auto;">
+        
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+            <div>
+                <h2>Goal Management</h2>
+                <p class="subtitle">Track your deadlines and progress for all subjects</p>
+            </div>
+            <a th:href="@{/dashboard}" class="btn" style="background: rgba(255,255,255,0.1); width: auto;">Back to Dashboard</a>
+        </div>
+
+        <div th:if="${#lists.isEmpty(subjects)}" style="text-align: center; padding: 40px; color: var(--text-secondary);">
+            No goals found. Start by adding a subject!
+        </div>
+
+        <!-- Iterate through subjects to display goals -->
+        <!-- In Thymeleaf, we can do some simple date math. Since we don't have a complex service method attached to the model, we'll display basic goal data -->
+        <div th:each="subject : ${subjects}" class="goal-card">
+            
+            <div class="goal-info">
+                <h3 th:text="${subject.name}">Subject Name</h3>
+                <div class="progress-text">
+                    Total Topics: <span th:text="${subject.topics.size()}">0</span> |
+                    Completed: <span th:text="${subject.topics.?[status == 'Completed'].size()}">0</span> |
+                    Remaining: <span th:text="${subject.topics.size() - subject.topics.?[status == 'Completed'].size()}">0</span>
+                </div>
+                <div style="margin-top: 12px;">
+                    <a th:href="@{/subjects/{id}/edit(id=${subject.id})}" style="color: #0ea5e9; font-size: 13px; text-decoration: none;">Update Deadline -></a>
+                </div>
+            </div>
+
+            <!-- Basic Deadline View -->
+            <div th:if="${subject.topics.size() > 0 && subject.topics.size() == subject.topics.?[status == 'Completed'].size()}" class="deadline-badge deadline-completed">
+                Goal Achieved!
+            </div>
+            <div th:unless="${subject.topics.size() > 0 && subject.topics.size() == subject.topics.?[status == 'Completed'].size()}" class="deadline-badge deadline-warn">
+                Target: <span th:text="${subject.daysToComplete}">0</span> Days
+            </div>
+
+        </div>
+
+    </div>
+</body>
+</html>

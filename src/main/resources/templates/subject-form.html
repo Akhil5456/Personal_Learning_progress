@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Subject - Personal Learning Tracker</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <script>
+        function addTopicField() {
+            const container = document.getElementById('topics-container');
+            const index = container.children.length;
+            
+            const newField = document.createElement('div');
+            newField.className = 'topic-input-group';
+            newField.style.display = 'flex';
+            newField.style.gap = '10px';
+            newField.style.marginBottom = '10px';
+            
+            newField.innerHTML = `
+                <input type="text" name="topics[${index}].name" class="form-control" placeholder="Topic Name" autocomplete="off">
+                <input type="hidden" name="topics[${index}].status" value="Pending">
+                <button type="button" class="btn" style="width: auto; background: rgba(239, 68, 68, 0.2); color: #fca5a5; margin: 0;" onclick="this.parentElement.remove()">Remove</button>
+            `;
+            
+            container.appendChild(newField);
+        }
+    </script>
+</head>
+<body>
+    <div class="container" style="max-width: 600px; margin: 40px auto;">
+        <h2 th:text="${subject.id == null ? 'Add New Subject' : 'Edit Subject'}">Add Subject</h2>
+        
+        <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+        <form th:action="@{/subjects/save}" th:object="${subject}" method="post">
+            <input type="hidden" th:field="*{id}">
+            <input type="hidden" th:field="*{createdAt}">
+            
+            <div class="form-group">
+                <label for="name">Subject Name</label>
+                <input type="text" id="name" th:field="*{name}" class="form-control" required autocomplete="off">
+            </div>
+
+            <div class="form-group">
+                <label for="code">Subject Code (must be unique)</label>
+                <input type="text" id="code" th:field="*{code}" class="form-control" required autocomplete="off" th:readonly="${subject.id != null}">
+            </div>
+
+            <div class="form-group">
+                <label for="daysToComplete">Days to Complete All Topics</label>
+                <input type="number" id="daysToComplete" th:field="*{daysToComplete}" class="form-control" required min="1">
+            </div>
+
+            <hr style="border: 0; height: 1px; background: rgba(255,255,255,0.1); margin: 30px 0;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                <label style="font-size: 16px; font-weight: 600; color: white;">Topics</label>
+                <button type="button" class="btn" style="width: auto; padding: 6px 12px; margin: 0; font-size: 13px;" onclick="addTopicField()">+ Add Topic</button>
+            </div>
+
+            <div id="topics-container">
+                <div th:each="topic, stat : *{topics}" class="topic-input-group" style="display: flex; gap: 10px; margin-bottom: 10px;">
+                    <input type="hidden" th:field="*{topics[__${stat.index}__].id}">
+                    <input type="text" th:field="*{topics[__${stat.index}__].name}" class="form-control" placeholder="Topic Name" autocomplete="off">
+                    <input type="hidden" th:field="*{topics[__${stat.index}__].status}">
+                    <button type="button" class="btn" style="width: auto; background: rgba(239, 68, 68, 0.2); color: #fca5a5; margin: 0;" onclick="this.parentElement.remove()">Remove</button>
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 16px; margin-top: 30px;">
+                <a th:href="@{/subjects}" class="btn" style="background: rgba(255,255,255,0.1); text-align: center; line-height: 24px; text-decoration: none;">Cancel</a>
+                <button type="submit" class="btn">Save Subject</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

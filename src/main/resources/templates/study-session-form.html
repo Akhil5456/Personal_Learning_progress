@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Record Study Session - Personal Learning Tracker</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <script>
+        function updateTopics() {
+            var subjectId = document.getElementById("subjectId").value;
+            var topicSelect = document.getElementById("topicId");
+            var allTopics = document.getElementById("allTopicsSource").options;
+            
+            // Clear current topics
+            topicSelect.innerHTML = '<option value="">Select Topic</option>';
+            
+            if (!subjectId) return;
+            
+            // Copy relevant topics
+            for (var i = 0; i < allTopics.length; i++) {
+                if (allTopics[i].getAttribute('data-subject-id') === subjectId) {
+                    var opt = document.createElement("option");
+                    opt.value = allTopics[i].value;
+                    opt.text = allTopics[i].text;
+                    topicSelect.appendChild(opt);
+                }
+            }
+        }
+    </script>
+</head>
+<body>
+    <div class="container" style="max-width: 600px; margin: 40px auto;">
+        <h2>Record Study Session</h2>
+        
+        <!-- Hidden source of all topics to avoid inline JS issues -->
+        <select id="allTopicsSource" style="display: none;">
+            <th:block th:each="sub : ${subjects}">
+                <option th:each="topic : ${sub.topics}" 
+                        th:value="${topic.id}" 
+                        th:text="${topic.name}" 
+                        th:data-subject-id="${sub.id}">
+                </option>
+            </th:block>
+        </select>
+        
+        <form th:action="@{/study-sessions/save}" th:object="${studySession}" method="post">
+            
+            <div class="form-group">
+                <label for="subjectId">Subject</label>
+                <select id="subjectId" name="subjectId" class="form-control" required onchange="updateTopics()">
+                    <option value="">Select Subject</option>
+                    <option th:each="sub : ${subjects}" 
+                            th:value="${sub.id}" 
+                            th:text="${sub.name}">
+                    </option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="topicId">Topic</label>
+                <select id="topicId" name="topicId" class="form-control" required>
+                    <option value="">Select Topic</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="studyDate">Study Date</label>
+                <input type="date" id="studyDate" th:field="*{studyDate}" class="form-control" required>
+            </div>
+
+            <div class="form-group">
+                <label for="durationMinutes">Duration (Minutes)</label>
+                <input type="number" id="durationMinutes" th:field="*{durationMinutes}" class="form-control" required min="1" placeholder="e.g. 60">
+            </div>
+
+            <div class="form-group">
+                <label for="remarks">Remarks (Optional)</label>
+                <textarea id="remarks" th:field="*{remarks}" class="form-control" rows="3" placeholder="What did you focus on?"></textarea>
+            </div>
+
+            <div style="display: flex; gap: 16px; margin-top: 30px;">
+                <a th:href="@{/dashboard}" class="btn" style="background: rgba(255,255,255,0.1); text-align: center;">Cancel</a>
+                <button type="submit" class="btn" style="background: #8b5cf6;">Save Session</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

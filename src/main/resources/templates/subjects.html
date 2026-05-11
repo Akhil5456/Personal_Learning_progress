@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Subjects - Personal Learning Tracker</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        .page-container {
+            max-width: 1000px;
+            width: 100%;
+            margin: 40px auto;
+        }
+        .header-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+        .search-bar {
+            display: flex;
+            gap: 10px;
+        }
+        .subject-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .subject-card {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--surface-border);
+            border-radius: 16px;
+            padding: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+        .subject-card h3 {
+            font-size: 20px;
+            color: white;
+            margin-bottom: 4px;
+        }
+        .badge {
+            background: rgba(255,255,255,0.1);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            color: var(--text-secondary);
+            display: inline-block;
+            margin-bottom: 16px;
+        }
+        .topic-list {
+            margin-top: 16px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            padding-top: 16px;
+        }
+        .topic-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            font-size: 14px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .topic-item:last-child {
+            border-bottom: none;
+        }
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+            text-decoration: none;
+        }
+        .status-pending {
+            background: rgba(239, 68, 68, 0.2);
+            color: #fca5a5;
+        }
+        .status-completed {
+            background: rgba(16, 185, 129, 0.2);
+            color: #6ee7b7;
+        }
+        .card-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .card-actions .btn {
+            padding: 8px 16px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="page-container container">
+        
+        <div class="header-actions">
+            <div>
+                <h2 style="text-align: left; margin:0;">Subject Management</h2>
+                <p class="subtitle" style="text-align: left; margin:0;">Manage your learning topics and subjects</p>
+            </div>
+            <div style="display: flex; gap: 16px;">
+                <a th:href="@{/dashboard}" class="btn" style="background: rgba(255,255,255,0.1); width: auto;">Back to Dashboard</a>
+                <a th:href="@{/subjects/add}" class="btn" style="width: auto;">+ Add Subject</a>
+            </div>
+        </div>
+
+        <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+
+        <form th:action="@{/subjects}" method="get" class="search-bar" style="margin-bottom: 30px;">
+            <input type="text" name="keyword" th:value="${keyword}" placeholder="Search by Subject Name or Code..." class="form-control">
+            <button type="submit" class="btn" style="width: auto; margin-top: 0;">Search</button>
+            <a th:if="${keyword}" th:href="@{/subjects}" class="btn" style="width: auto; margin-top: 0; background: rgba(255,255,255,0.1);">Clear</a>
+        </form>
+
+        <div th:if="${#lists.isEmpty(subjects)}" style="text-align: center; padding: 40px; color: var(--text-secondary);">
+            No subjects found. Click "Add Subject" to get started!
+        </div>
+
+        <div class="subject-grid">
+            <div class="subject-card" th:each="subject : ${subjects}">
+                <h3 th:text="${subject.name}">Subject Name</h3>
+                <span class="badge" th:text="${subject.code}">CODE123</span>
+                <span class="badge" th:text="${subject.daysToComplete + ' Days'}">30 Days</span>
+                
+                <div class="topic-list">
+                    <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 8px; text-transform: uppercase; font-weight: 600;">Topics</p>
+                    <div th:if="${#lists.isEmpty(subject.topics)}" style="font-size: 13px; color: var(--text-secondary); font-style: italic;">No topics added.</div>
+                    
+                    <div class="topic-item" th:each="topic : ${subject.topics}">
+                        <span th:text="${topic.name}">Topic 1</span>
+                        <form th:action="@{/subjects/topic/{id}/toggle(id=${topic.id})}" method="post" style="margin: 0;">
+                            <input type="hidden" name="returnUrl" th:value="@{/subjects}">
+                            <button type="submit" style="border: none; cursor: pointer;" 
+                                    th:classappend="${topic.status == 'Completed' ? 'status-badge status-completed' : 'status-badge status-pending'}"
+                                    th:text="${topic.status}">
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="card-actions">
+                    <a th:href="@{/subjects/{id}/topics(id=${subject.id})}" class="btn" style="background: var(--primary-color);">Manage Topics</a>
+                    <a th:href="@{/subjects/{id}/edit(id=${subject.id})}" class="btn" style="background: rgba(255,255,255,0.1);">Edit</a>
+                    <form th:action="@{/subjects/{id}/delete(id=${subject.id})}" method="post" style="margin: 0; flex: 1;" onsubmit="return confirm('Are you sure you want to delete this subject and all its topics?');">
+                        <button type="submit" class="btn" style="background: rgba(239, 68, 68, 0.2); color: #fca5a5; width: 100%;">Delete</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>

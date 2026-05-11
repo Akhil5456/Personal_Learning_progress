@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Topics - Personal Learning Tracker</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        .topic-card {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--surface-border);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+        .topic-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+        }
+        .status-pending {
+            background: rgba(239, 68, 68, 0.2);
+            color: #fca5a5;
+        }
+        .status-completed {
+            background: rgba(16, 185, 129, 0.2);
+            color: #6ee7b7;
+        }
+        .meta-text {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-top: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" style="max-width: 800px; margin: 40px auto;">
+        
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+            <div>
+                <h2>Topic Progress</h2>
+                <p class="subtitle" th:text="'Managing topics for: ' + ${subject.name}"></p>
+            </div>
+            <a th:href="@{/subjects}" class="btn" style="background: rgba(255,255,255,0.1); width: auto;">Back to Subjects</a>
+        </div>
+
+        <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+
+        <div th:if="${#lists.isEmpty(subject.topics)}" style="text-align: center; padding: 40px; color: var(--text-secondary);">
+            No topics available for this subject.
+        </div>
+
+        <div th:each="topic : ${subject.topics}" class="topic-card">
+            <div class="topic-header">
+                <h3 th:text="${topic.name}" style="font-size: 18px; margin: 0; color: white;">Topic Name</h3>
+                
+                <form th:action="@{/subjects/topic/{id}/toggle(id=${topic.id})}" method="post" style="margin: 0;">
+                    <input type="hidden" name="returnUrl" th:value="@{/subjects/{id}/topics(id=${subject.id})}">
+                    <button type="submit" 
+                            th:classappend="${topic.status == 'Completed' ? 'status-badge status-completed' : 'status-badge status-pending'}"
+                            th:text="${topic.status}">
+                    </button>
+                </form>
+            </div>
+            
+            <div th:if="${topic.completionDate != null}" class="meta-text" style="margin-bottom: 12px; color: #6ee7b7;">
+                ✓ Completed on: <span th:text="${topic.completionDate}"></span>
+            </div>
+
+            <form th:action="@{/subjects/topic/{id}/update(id=${topic.id})}" method="post" style="margin: 0;">
+                <input type="hidden" name="subjectId" th:value="${subject.id}">
+                <div class="form-group" style="margin-bottom: 10px;">
+                    <label style="font-size: 13px;">Personal Notes</label>
+                    <textarea name="notes" class="form-control" rows="2" placeholder="Add study notes, references, or key takeaways..." th:text="${topic.notes}" style="resize: vertical;"></textarea>
+                </div>
+                <div style="text-align: right;">
+                    <button type="submit" class="btn" style="width: auto; padding: 6px 16px; font-size: 13px; margin: 0;">Save Notes</button>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</body>
+</html>

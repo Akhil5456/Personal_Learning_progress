@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Personal Learning Tracker</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 24px 0;
+        }
+        .metric-card {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 24px;
+            border-radius: 16px;
+            border: 1px solid var(--surface-border);
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+        .metric-card:hover {
+            transform: translateY(-5px);
+            background: rgba(0, 0, 0, 0.3);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+        .metric-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 8px;
+        }
+        .metric-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        .action-bar {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container dashboard-container">
+        <h2>Dashboard</h2>
+        <p class="subtitle">Welcome to Personal Learning Tracker, <span th:text="${username}" style="color: white; font-weight: 600;"></span>!</p>
+
+        <div class="grid-container">
+            <div class="metric-card">
+                <div class="metric-value" th:text="${totalSubjects}">0</div>
+                <div class="metric-label">Total Subjects</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value" th:text="${totalTopics}">0</div>
+                <div class="metric-label">Total Topics</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value" th:text="${completedTopics}">0</div>
+                <div class="metric-label">Completed Topics</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value" th:text="${pendingTopics}">0</div>
+                <div class="metric-label">Pending Topics</div>
+            </div>
+            <div class="metric-card" style="grid-column: 1 / -1;">
+                <div class="metric-value">
+                    <span th:text="${completionPercentage}">0</span>%
+                </div>
+                <div class="metric-label">Overall Completion</div>
+                
+                <div style="width: 100%; background: rgba(255,255,255,0.1); height: 8px; border-radius: 4px; margin-top: 12px; overflow: hidden;">
+                    <div th:style="'width: ' + ${completionPercentage} + '%; background: var(--success-color); height: 100%; border-radius: 4px; transition: width 1s ease;'"></div>
+                </div>
+            </div>
+            <div class="metric-card" style="grid-column: 1 / -1; background: rgba(79, 70, 229, 0.1); border-color: rgba(79, 70, 229, 0.3);">
+                <div class="metric-value" style="font-size: 20px; color: white;" th:text="${activeGoal}">No pending goals</div>
+                <div class="metric-label" style="color: rgba(255,255,255,0.7);">Active Goal / Nearest Deadline</div>
+            </div>
+        </div>
+
+        <div class="action-bar" style="flex-wrap: wrap;">
+            <a th:href="@{/subjects}" class="btn" style="width: auto; padding: 12px 24px;">Manage Subjects</a>
+            <a th:href="@{/study-sessions/add}" class="btn" style="width: auto; padding: 12px 24px; background: #8b5cf6;">Record Session</a>
+            <a th:href="@{/goals}" class="btn" style="width: auto; padding: 12px 24px; background: #0ea5e9;">Goals</a>
+            <a th:href="@{/reports}" class="btn" style="width: auto; padding: 12px 24px; background: #10b981;">Reports</a>
+            <a th:href="@{/logout}" class="btn" style="width: auto; padding: 12px 24px; background: rgba(239, 68, 68, 0.2); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.3);">Sign Out</a>
+        </div>
+    </div>
+</body>
+</html>
