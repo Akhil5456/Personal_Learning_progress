@@ -1,23 +1,29 @@
-# Use a lightweight Java 17 runtime environment
-FROM openjdk:17-jdk-slim
+# Stage 1: Build the application with Maven
+FROM eclipse-temurin:17-jdk-slim AS build
 
-# Set working directory
 WORKDIR /app
 
-# Copy the JAR file
-COPY target/tracker-0.0.1-SNAPSHOT.jar app.jar
+# Copy Maven wrapper and pom.xml first for dependency caching
+COPY pom.xml ./
+COPY .mvn .mvn
+COPY mvnw ./
+RUN chmod +x mvnw && ./mvnw dependency:resolve -B || true
 
-# Expose port 8080
-EXPOSE 8080
+# Copy source code and build
+COPY src ./src
+RUN if [ -f mvnw ]; then ./mvnw package -B -DskipTests; else apt-get update && apt-get install -y maven && mvn package -B -DskipTests; fi
 
-# Add health check
-HEALTHCHECK --interval=30s --timeout=3s --start-period=60s --retries=3 \
-  CMD curl -f http://localhost:8080/actuator/health || exit 1
+# Stage 2: Run the application
+FROM eclipse-temurin:17-jre-slim
 
-# Run the application
-ENTRYPOINT ["java", "-jar", "app.jar"]
+WORKDIR /app
 
-# Add labels for metadata
-LABEL maintainer="your-email@example.com"
-LABEL version="1.0"
-LABEL description="Personal Learning Tracker Spring Boot Application"
+# Copy the built JAR from the build stage
+COPY --from=build /app/target/tracker-0.0.1-SNAPSHOT.jar app.jar
+
+# Railway provides PORT dynamically
+ENV PORT=8080
+EXPOSE ${PORT}
+
+# Run the application using Railway's PORT
+ENTRYPOINT ["java", "-jar", "app.jar", "--server.port=${PORT}"]
