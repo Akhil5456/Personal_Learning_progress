@@ -22,13 +22,11 @@
 
 body {
     min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
     background: linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-end));
     color: var(--text-primary);
     position: relative;
-    overflow: hidden;
+    overflow-x: hidden;
+    padding: 20px 0;
 }
 
 /* Background Animated Shapes */
@@ -64,6 +62,7 @@ body::after {
 .container {
     width: 100%;
     max-width: 450px;
+    margin: 0 auto;
     padding: 40px;
     background: var(--surface-color);
     border: 1px solid var(--surface-border);
@@ -86,6 +85,7 @@ h2 {
     margin-bottom: 8px;
     text-align: center;
     background: linear-gradient(to right, #fff, #cbd5e1);
+    background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
@@ -189,4 +189,45 @@ h2 {
 
 .mt-4 {
     margin-top: 24px;
+}
+
+/* Register Container Specific Styles */
+.register-container {
+    max-width: 600px !important;
+    margin: 40px auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        margin: 0 20px;
+        padding: 30px 20px;
+    }
+    
+    .register-container {
+        margin: 20px auto !important;
+        padding: 30px 20px !important;
+    }
+    
+    body {
+        padding: 10px 0;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        margin: 0 10px;
+        padding: 25px 15px;
+    }
+    
+    .register-container {
+        margin: 10px auto !important;
+        padding: 25px 15px !important;
+    }
+    
+    h2 {
+        font-size: 24px;
+    }
 }
