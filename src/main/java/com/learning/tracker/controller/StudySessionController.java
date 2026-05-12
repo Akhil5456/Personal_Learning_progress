@@ -56,8 +56,13 @@ public class StudySessionController {
         String username = getLoggedInUser(session);
         if (username == null) return "redirect:/login";
 
-        studySessionService.saveSession(studySession, subjectId, topicId, username);
-        redirectAttributes.addFlashAttribute("success", "Study session recorded successfully!");
+        try {
+            studySessionService.saveSession(studySession, subjectId, topicId, username);
+            redirectAttributes.addFlashAttribute("success", "Study session recorded successfully!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Failed to save study session: " + e.getMessage());
+            return "redirect:/study-sessions/add";
+        }
         return "redirect:/study-sessions";
     }
 }

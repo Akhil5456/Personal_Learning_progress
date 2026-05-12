@@ -37,16 +37,42 @@ public class StudySessionService {
     }
 
     public void saveSession(StudySession session, Long subjectId, Long topicId, String username) {
+        if (session == null) {
+            throw new IllegalArgumentException("Study session cannot be null");
+        }
+        if (subjectId == null) {
+            throw new IllegalArgumentException("Subject ID cannot be null");
+        }
+        if (topicId == null) {
+            throw new IllegalArgumentException("Topic ID cannot be null");
+        }
+        if (username == null || username.trim().isEmpty()) {
+            throw new IllegalArgumentException("Username cannot be null or empty");
+        }
+
         Optional<User> userOpt = userRepository.findByUsername(username);
         Optional<Subject> subjectOpt = subjectRepository.findById(subjectId);
         Optional<Topic> topicOpt = topicRepository.findById(topicId);
 
-        if (userOpt.isPresent() && subjectOpt.isPresent() && topicOpt.isPresent()) {
-            session.setUser(userOpt.get());
-            session.setSubject(subjectOpt.get());
-            session.setTopic(topicOpt.get());
-            studySessionRepository.save(session);
+        if (userOpt.isEmpty()) {
+            throw new IllegalArgumentException("User not found: " + username);
         }
+        if (subjectOpt.isEmpty()) {
+            throw new IllegalArgumentException("Subject not found with ID: " + subjectId);
+        }
+        if (topicOpt.isEmpty()) {
+            throw new IllegalArgumentException("Topic not found with ID: " + topicId);
+        }
+
+        session.setUser(userOpt.get());
+        session.setSubject(subjectOpt.get());
+        session.setTopic(topicOpt.get());
+        
+        if (session.getStudyDate() == null) {
+            session.setStudyDate(java.time.LocalDate.now());
+        }
+        
+        studySessionRepository.save(session);
     }
 
     public int getTotalStudyMinutes(String username) {
