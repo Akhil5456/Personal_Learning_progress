@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Student Dashboard</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+</head>
+<body>
+<div class="container">
+    <h2>Welcome, <span th:text="${student?.username}">Student</span>!</h2>
+    <p>This is your progress dashboard.</p>
+    <!-- Example placeholder cards -->
+    <div class="card-grid" style="display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 1rem;">
+        <div class="card" style="flex: 1 1 200px; background: rgba(255,255,255,0.8); padding: 1rem; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.1);">
+            <h3>Progress Summary</h3>
+            <p>Here you can display a chart or summary of learning progress.</p>
+        </div>
+        <div class="card" style="flex: 1 1 200px; background: rgba(255,255,255,0.8); padding: 1rem; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.1);">
+            <h3>Upcoming Sessions</h3>
+            <p>List of upcoming study sessions or goals.</p>
+        </div>
+    </div>
+    <p style="margin-top: 2rem;"><a th:href="@{/logout}">Logout</a></p>
+</div>
+</body>
+</html>

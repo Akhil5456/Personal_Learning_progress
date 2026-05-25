@@ -4,9 +4,10 @@ import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import jakarta.persistence.UniqueConstraint;
 
 @Entity
-@Table(name = "subjects")
+@Table(name = "subjects", uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "code"}))
 public class Subject {
 
     @Id

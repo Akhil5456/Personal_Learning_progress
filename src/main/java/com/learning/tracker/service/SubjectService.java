@@ -113,7 +113,7 @@ public class SubjectService {
     public int getCompletedTopics(String username) {
         return (int) getSubjectsByUser(username).stream()
                 .flatMap(s -> s.getTopics().stream())
-                .filter(t -> "Completed".equals(t.getStatus()))
+                .filter(t -> t != null && "Completed".equals(t.getStatus()))
                 .count();
     }
 
@@ -134,7 +134,9 @@ public class SubjectService {
             long daysRemaining = ChronoUnit.DAYS.between(LocalDate.now(), deadline);
             
             // Check if subject is already completed
-            boolean isCompleted = s.getTopics().stream().allMatch(t -> "Completed".equals(t.getStatus()));
+            boolean isCompleted = s.getTopics().stream()
+                    .filter(t -> t != null)
+                    .allMatch(t -> "Completed".equals(t.getStatus()));
             
             if (!isCompleted && daysRemaining < minDaysRemaining) {
                 minDaysRemaining = daysRemaining;

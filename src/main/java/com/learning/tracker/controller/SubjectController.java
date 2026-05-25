@@ -57,9 +57,11 @@ public class SubjectController {
         String username = getLoggedInUser(session);
         if (username == null) return "redirect:/login";
 
-        // Remove empty topics that might have been submitted by the dynamic form
-        subject.getTopics().removeIf(t -> t.getName() == null || t.getName().trim().isEmpty());
+        // Remove empty or null topics that might have been submitted by the dynamic form
+        subject.getTopics().removeIf(t -> t == null || t.getName() == null || t.getName().trim().isEmpty());
 
+        // When creating a new subject, ensure the code is unique for the user.
+        // If the subject already has an ID (editing), we allow the same code.
         if (subject.getId() == null && subjectService.isCodeExistsForUser(subject.getCode(), username)) {
             redirectAttributes.addFlashAttribute("error", "Subject Code already exists.");
             return "redirect:/subjects/add";
