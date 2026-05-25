@@ -78,6 +78,13 @@
                 <textarea id="remarks" th:field="*{remarks}" class="form-control" rows="3" placeholder="What did you focus on?"></textarea>
             </div>
 
+                <div class="form-group">
+                    <label for="completed">Completed</label>
+                    <select id="completed" name="completed" th:field="*{completed}" class="form-control">
+                        <option th:value="true">Yes</option>
+                        <option th:value="false">No</option>
+                    </select>
+                </div>
             <div style="display: flex; gap: 16px; margin-top: 30px;">
                 <a th:href="@{/dashboard}" class="btn" style="background: rgba(255,255,255,0.1); text-align: center;">Cancel</a>
                 <button type="submit" class="btn" style="background: #8b5cf6;">Save Session</button>

@@ -18,6 +18,11 @@ public class StudySession {
     @Column(length = 500)
     private String remarks;
 
+    // Indicates if the session is marked as completed
+    private boolean completed = false;
+
+    public boolean isCompleted() { return completed; }
+    public void setCompleted(boolean completed) { this.completed = completed; }
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "subject_id")
     private Subject subject;
@@ -32,6 +37,7 @@ public class StudySession {
 
     public StudySession() {
         this.studyDate = LocalDate.now();
+        this.completed = false;
     }
 
     public Long getId() { return id; }
@@ -45,6 +51,8 @@ public class StudySession {
 
     public String getRemarks() { return remarks; }
     public void setRemarks(String remarks) { this.remarks = remarks; }
+
+
 
     public Subject getSubject() { return subject; }
     public void setSubject(Subject subject) { this.subject = subject; }

@@ -62,7 +62,8 @@
                 <div class="progress-text">
                     Total Topics: <span th:text="${subject.topics.size()}">0</span> |
                     Completed: <span th:text="${subject.topics.?[status == 'Completed'].size()}">0</span> |
-                    Remaining: <span th:text="${subject.topics.size() - subject.topics.?[status == 'Completed'].size()}">0</span>
+                    Remaining: <span th:text="${subject.topics.size() - subject.topics.?[status == 'Completed'].size()}">0</span> |
+                    Completed Sessions: <span th:text="${completedSessions}">0</span>
                 </div>
                 <div style="margin-top: 12px;">
                     <a th:href="@{/subjects/{id}/edit(id=${subject.id})}" style="color: #0ea5e9; font-size: 13px; text-decoration: none;">Update Deadline -></a>

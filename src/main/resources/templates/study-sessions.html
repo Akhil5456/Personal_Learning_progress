@@ -76,12 +76,12 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr th:each="session : ${sessions}">
-                        <td th:text="${session.studyDate}"></td>
-                        <td th:text="${session.subject.name}"></td>
-                        <td th:text="${session.topic.name}"></td>
-                        <td th:text="${session.durationMinutes + ' min'}"></td>
-                        <td th:text="${session.remarks}"></td>
+                    <tr th:each="studySession : ${sessions}">
+                        <td th:text="${studySession.studyDate}"></td>
+                        <td th:text="${studySession.subject.name}"></td>
+                        <td th:text="${studySession.topic.name}"></td>
+                        <td th:text="${studySession.durationMinutes + ' min'}"></td>
+                        <td th:text="${studySession.remarks}"></td>
                     </tr>
                 </tbody>
             </table>

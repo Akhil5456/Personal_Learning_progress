@@ -39,6 +39,7 @@ public class ReportController {
         model.addAttribute("totalStudyMinutes", studySessionService.getTotalStudyMinutes(username));
         model.addAttribute("totalSubjects", subjectService.getTotalSubjects(username));
         model.addAttribute("completionPercentage", subjectService.getOverallCompletionPercentage(username));
+        model.addAttribute("completedSessions", studySessionService.getCompletedSessionCount(username));
 
         return "reports";
     }
@@ -51,7 +52,7 @@ public class ReportController {
         List<Subject> subjects = subjectService.getSubjectsByUser(username);
         
         // Let's attach some dynamic data for the view
-        model.addAttribute("subjects", subjects);
+        model.addAttribute("completedSessions", studySessionService.getCompletedSessionCount(username));
         
         return "goals";
     }

@@ -67,12 +67,30 @@ public class StudySessionService {
         session.setUser(userOpt.get());
         session.setSubject(subjectOpt.get());
         session.setTopic(topicOpt.get());
-        
+        // Update the related topic status based on whether the session is completed
+Topic topicEntity = topicOpt.get();
+if (session.isCompleted()) {
+    topicEntity.setStatus("Completed");
+    topicEntity.setCompletionDate(java.time.LocalDate.now());
+} else {
+    topicEntity.setStatus("Pending");
+    topicEntity.setCompletionDate(null);
+}
+topicRepository.save(topicEntity);
+
         if (session.getStudyDate() == null) {
             session.setStudyDate(java.time.LocalDate.now());
         }
         
+
         studySessionRepository.save(session);
+    }
+
+    // Returns the count of completed study sessions for a user
+    public long getCompletedSessionCount(String username) {
+        return getSessionsByUser(username).stream()
+                .filter(StudySession::isCompleted)
+                .count();
     }
 
     public int getTotalStudyMinutes(String username) {
